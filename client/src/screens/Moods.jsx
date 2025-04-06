@@ -1,29 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { useSelector } from 'react-redux';
 
-const moodboards = [
-    { id: '1', name: 'Date Night', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80' },
-    { id: '2', name: 'Summer Vacation', image: 'https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?auto=format&fit=crop&w=600&q=80' },
-    { id: '3', name: 'Flight to Goa', image: 'https://images.unsplash.com/photo-1483794344563-d27a8d18014e?auto=format&fit=crop&w=600&q=80' },
-    { id: '4', name: 'Murder', image: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=600&q=80' },
+
+export let moodboards = [
+    { id: '1', name: 'Date Night', movieIds:[],image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80' },
+    { id: '2', name: 'Summer Vacation', movieIds:[], image: 'https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?auto=format&fit=crop&w=600&q=80' },
+    { id: '3', name: 'Flight to Goa', movieIds:[], image: 'https://images.unsplash.com/photo-1483794344563-d27a8d18014e?auto=format&fit=crop&w=600&q=80' },
+    { id: '4', name: 'Murder', movieIds:[], image: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=600&q=80' },
   
 ];
 
 const MoodBoardsScreen = () => {
+  const user=useSelector((state)=>state.auth.user);
+ 
+  
   const renderMoodboard = ({ item }) => (
     <TouchableOpacity style={styles.card}>
-      <Image source={{ uri: item.image }} style={styles.image} />
+      {/* <Image source={{ uri: item.image }} style={styles.image} /> */}
       <View style={styles.overlay}>
         <Text style={styles.text}>{item.name}</Text>
       </View>
     </TouchableOpacity>
   );
-
+  
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
       <Text style={styles.title}>Your Moodboards</Text>
 
-      {moodboards.length === 0 ? (
+      {moodboards?.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Create your own moodboards</Text>
         </View>

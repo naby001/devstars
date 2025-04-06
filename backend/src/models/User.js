@@ -27,13 +27,15 @@ const userSchema = new mongoose.Schema({
         
     },
     liked:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Movie'
+       type:String
     }],
     disliked:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Movie'
+        type:String
     }],
+    contextVector: {
+        type: [Number], // array of floats
+        default: [],
+      },
     createdAt: {
         type: Date,
         default: Date.now

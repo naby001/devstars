@@ -3,13 +3,28 @@ import { NavigationContainer } from '@react-navigation/native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import HomeScreen from './src/screens/Home';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from './src/store';
 import OnboardScreen from './src/screens/Onboard';
 import GetStartedScreen from './src/screens/GetStarted';
 const Stack = createNativeStackNavigator();
+const RootNavigator = () => {
+  const user = useSelector((state:any) => state.auth.user); // adjust based on your store slice
 
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {!user || !user._id ? (
+        <>
+          <Stack.Screen name="Login" component={OnboardScreen} />
+          <Stack.Screen name="Get Started" component={GetStartedScreen} />
+        </>
+      ) : (
+        <Stack.Screen name="Home" component={HomeScreen} />
+      )}
+    </Stack.Navigator>
+  );
+};
 const App = () => {
   
 
@@ -22,11 +37,7 @@ GoogleSignin.configure({
   
 <PersistGate loading={null} persistor={persistor}>
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={OnboardScreen} />
-      <Stack.Screen name="Get Started" component={GetStartedScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-      </Stack.Navigator>
+    <RootNavigator />
     </NavigationContainer>
     </PersistGate>
     </Provider>

@@ -16,12 +16,11 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { setlogin } from '../store/authSlice';
-//import { useTabBar } from '../contexts/TabBarContext';
-//import CommentSection from '../components/CommentSection';
-import { movies } from '../movielist';
+
+import { movieslist } from '../movielist';
 import MoodboardSelector from '../components/MoodBoardSelector';
+import { useSelector } from 'react-redux';
+import { moodboards } from './Moods';
 const { width, height } = Dimensions.get('window');
 
 
@@ -50,10 +49,13 @@ export default function SwipeUI() {
     const rightImageScale = useRef(new Animated.Value(1)).current; // Scale for the right image
     // const dispatch=useDispatch();
     //const {setIsTabBarVisible}=useTabBar();
+    const [movies,setmovies]=useState([]);
     const [liking,setliking]=useState(null);
     const [disliking,setdisliking]=useState(null);
     const [saving,setsaving]=useState(false);
     const [playing,setplaying]=useState(null);
+    const user = useSelector((state) => state.auth.user);
+     const [seen,setseen]=useState(0);
     useEffect(() => {
         const handleBackPress = () => {
             if (showDiscussion) {
@@ -127,8 +129,8 @@ export default function SwipeUI() {
         setplaying(null);
         if (dx > 100 || dx < -100) {
           const isLike = dx > 0;
-          reactsender(currentIndex, isLike ? 'true' : 'false');
-    
+          react(currentIndex, isLike ? true : false);
+          //console.log(isLike);
           Animated.timing(translateX, {
             toValue: isLike ? width : -width,
             duration: 300,
@@ -142,12 +144,13 @@ export default function SwipeUI() {
           });
     
         } else if (dy < -100) {
-          setsaving(true);
+          setplaying(true);
           
           translateX.setValue(0);
           translateY.setValue(0);
     
         } else {
+          
            // setsaving(null)
           // Reset animation
           Animated.spring(translateX, {
@@ -161,26 +164,42 @@ export default function SwipeUI() {
         }
       }
     });
-    
-    useEffect(() => {
-        const getripples = async () => {
-            const data = { campusid: user.campus_id, userid: user._id };
-            try {
-                const response = await fetch('http://192.168.31.12:5000/ripple/getripple', {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const returneddata = await response.json();
+    const getmovies = async (recommend) => {
+        const data = { userId: user._id };
+       
+        try {
+            const response = await fetch('http://192.168.251.241:5000/movie/getrecommend', {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const returneddata = await response.json();
+            console.log(returneddata)
+    //         const processedMovies = returneddata
+    // .map(rec => {
+    //   const found = movieslist.find(m => m.id === rec.movieid);
+    //   return found
+    //     ? {
+    //         title: found.primaryTitle,
+    //         image: found.primaryImage,
+    //         id: found.movieid
+    //       }
+    //     : null;
+    // })
+    // .filter(movie => movie !== null); // remove not found ones
+  if(!recommend)
+  setmovies(returneddata);
+else
+    setmovies((prev)=>[...prev,...returneddata]);
+            setviewed(0);
 
-                //setmovies(returneddata);
-                setviewed(0);
+        } catch (error) {
 
-            } catch (error) {
-
-            }
         }
-        getripples();
+    }
+    useEffect(() => {
+        
+        getmovies(false);
     }, [])
     useEffect(() => {
         if (currentIndex < movies.length) {
@@ -193,20 +212,26 @@ export default function SwipeUI() {
         }
     }, [currentIndex]);
 
-    const reactsender = async (index, like) => {
+    const react = async (index, like) => {
+        //console.log('hello')
         const data = {
-            rippleid: movies[index]._id,
-            like: like,
-            userid: user._id
+            movieId: movies[index].movieid,
+            liked: like,
+            userId: user._id
         };
-        console.log(JSON.stringify(data));
+        const seen1=seen+1;
+        setseen(seen1);
+        
         try {
-            const response = await fetch('http://192.168.31.12:5000/ripple/react', {
+            const response = await fetch('http://192.168.251.241:5000/movie/swipe', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
             const returnedmsg = await response.json();
+          if(seen1%3===0){
+            getmovies(true);
+          }
             console.log(returnedmsg);
 
         } catch (error) {
@@ -299,7 +324,7 @@ export default function SwipeUI() {
                     ]}
                 >
                     <ImageBackground
-                        source={{ uri: movies[currentIndex].primaryImage }}
+                        source={{ uri: movies[currentIndex].image }}
                         style={styles.backgroundImage}
                         resizeMode="cover"
                         
@@ -311,10 +336,10 @@ export default function SwipeUI() {
                         <View style={styles.gossipText}>
   <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
     <Text style={{ fontSize: 24, color: 'white', marginRight: 8 }}>
-      {movies[currentIndex].primaryTitle}
+      {movies[currentIndex].title}
     </Text>
     <View style={{ backgroundColor: 'grey', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, marginTop:20, marginRight: 8 }}>
-      <Text style={{ color: 'white', fontSize: 12 }}>{movies[currentIndex].contentRating}</Text>
+      <Text style={{ color: 'white', fontSize: 12 }}>{movies[currentIndex].rating}</Text>
     </View>
     <Text style={{ color: 'white', fontSize: 15 }}>{movies[currentIndex].startYear}</Text>
     </View>
@@ -327,7 +352,7 @@ export default function SwipeUI() {
 
                        
                     </ImageBackground>    
-                    <TouchableOpacity style={{position:'absolute', top:0, right:0}}>
+                    <TouchableOpacity style={{position:'absolute', top:0, right:0}} onPress={()=>{const ci=currentIndex+1;setCurrentIndex(ci);}}>
                     <Entypo name="cross" size={40} color="white" style={{ opacity: 0.5 }} />
 
     </TouchableOpacity>
@@ -352,16 +377,57 @@ export default function SwipeUI() {
             {/* <CommentSection/> */}
             <MoodboardSelector
   moodboards={[
-    { id: 1, name: 'Weekend Vibes' },
-    { id: 2, name: 'Feel Good' },
-    { id: 3, name: 'Drama Hour' },
+    { id: 1, name: 'Date Night' },
+    { id: 2, name: 'Summer Vacation' },
+    { id: 3, name: 'Flight to Frankfurt' },
   ]}
-  onSelect={(mb) => console.log('Selected:', mb)}
+  onSelect={(selectedMoodboard) => {
+    const fullMoodboard = moodboards.find(mb => mb.id === selectedMoodboard.id);
+    if (fullMoodboard) {
+      fullMoodboard.movieIds.push(movies[currentIndex].movieid);
+      const ci=currentIndex;
+      setCurrentIndex(ci+1);
+      setsaving(false);
+    }
+  }}
 />
           </Animated.View>
         </>
       )}
           
+          {playing && (
+        <>
+          <TouchableWithoutFeedback onPress={()=>setplaying(null)}>
+            <View style={[{...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'}]} />
+          </TouchableWithoutFeedback>
+          <Animated.View
+            style={[
+              styles.bottomSheet,
+              
+            ]}
+          >
+            {/* <CommentSection/> */}
+            <MoodboardSelector
+  moodboards={[
+    { id: 1, name: 'JioHotstar' },
+    { id: 2, name: 'Netflix' },
+    { id: 3, name: 'AmazonPrimeVideo' },
+  ]}
+   ott={true}
+  onSelect={(selectedMoodboard) => {
+    const fullMoodboard = moodboards.find(mb => mb.id === selectedMoodboard.id);
+    if (fullMoodboard) {
+      fullMoodboard.movieIds.push(movies[currentIndex].movieid);
+      const ci=currentIndex;
+      setCurrentIndex(ci+1);
+      setsaving(false);
+    }
+  }}
+/>
+          </Animated.View>
+        </>
+      )}
         </View>
     );
 }

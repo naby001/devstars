@@ -16,7 +16,8 @@
     "express": "^4.17.1",
     "google-auth-library": "^9.15.1",
     "mongodb": "^6.15.0",
-    "mongoose": "^5.10.9"
+    "mongoose": "^5.10.9",
+    "openai": "^4.91.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

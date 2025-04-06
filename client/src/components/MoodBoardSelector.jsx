@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
-const MoodboardSelector = ({ moodboards, onSelect }) => {
+const MoodboardSelector = ({ moodboards, onSelect,ott }) => {
   const [selected, setSelected] = useState(null);
 
   const handleSelect = (moodboard) => {
@@ -11,7 +11,7 @@ const MoodboardSelector = ({ moodboards, onSelect }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Select Moodboard</Text>
+      <Text style={styles.title}>Select {ott?"Platform":"Moodboard"}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {moodboards.map((mb) => (
           <TouchableOpacity
@@ -20,7 +20,7 @@ const MoodboardSelector = ({ moodboards, onSelect }) => {
               styles.moodboardBtn,
               selected?.id === mb.id && styles.selectedBtn,
             ]}
-            onPress={() => handleSelect(mb)}
+            onPress={() => onSelect()}
           >
             <Text style={styles.btnText}>{mb.name}</Text>
           </TouchableOpacity>
