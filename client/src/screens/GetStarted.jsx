@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { setlogin } from '../store/authSlice';
 const { width } = Dimensions.get('window');
 
 const GetStartedScreen = () => {
@@ -40,8 +41,9 @@ const GetStartedScreen = () => {
           'Content-Type':'application/json'
         },
         body:JSON.stringify(data)
-      })
-      dispatch(setlogin({ user: returneduser }));
+      });
+      const returneddata=await response.json();
+      dispatch(setlogin({ user: returneddata }));
       navigation.navigate("Home");
      } catch (error) {
       console.log(error);
@@ -176,7 +178,7 @@ const GetStartedScreen = () => {
               value={university}
               onChangeText={setUniversity}
             />
-            <TouchableOpacity style={styles.nextBtn} onPress={()=>{ navigation.navigate("Home");}}>
+            <TouchableOpacity style={styles.nextBtn} onPress={()=>{ handleStart();}}>
               <Text style={styles.btnText}>Start Enjoying</Text>
             </TouchableOpacity>
           </View>

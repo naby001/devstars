@@ -16,12 +16,10 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { setlogin } from '../store/authSlice';
-//import { useTabBar } from '../contexts/TabBarContext';
-//import CommentSection from '../components/CommentSection';
+
 import { movies } from '../movielist';
 import MoodboardSelector from '../components/MoodBoardSelector';
+import { useSelector } from 'react-redux';
 const { width, height } = Dimensions.get('window');
 
 
@@ -54,6 +52,8 @@ export default function SwipeUI() {
     const [disliking,setdisliking]=useState(null);
     const [saving,setsaving]=useState(false);
     const [playing,setplaying]=useState(null);
+    const user = useSelector((state) => state.auth.user);
+    
     useEffect(() => {
         const handleBackPress = () => {
             if (showDiscussion) {
@@ -127,8 +127,8 @@ export default function SwipeUI() {
         setplaying(null);
         if (dx > 100 || dx < -100) {
           const isLike = dx > 0;
-          reactsender(currentIndex, isLike ? 'true' : 'false');
-    
+          react(currentIndex, isLike ? true : false);
+          //console.log(isLike);
           Animated.timing(translateX, {
             toValue: isLike ? width : -width,
             duration: 300,
@@ -193,15 +193,16 @@ export default function SwipeUI() {
         }
     }, [currentIndex]);
 
-    const reactsender = async (index, like) => {
+    const react = async (index, like) => {
+        //console.log('hello')
         const data = {
-            rippleid: movies[index]._id,
-            like: like,
-            userid: user._id
+            movieId: movies[index].id,
+            liked: like,
+            userId: user._id
         };
-        console.log(JSON.stringify(data));
+        
         try {
-            const response = await fetch('http://192.168.31.12:5000/ripple/react', {
+            const response = await fetch('http://192.168.251.241:5000/movie/swipe', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)

@@ -2,18 +2,18 @@ import { User } from "../models/User.js";
 
 export const swipe= async (req, res) => {
     const { userId, movieId, liked } = req.body;
-  
+    console.log(req.body);
     try {
       const user = await User.findById(userId);
       if (!user) return res.status(404).json({ message: 'User not found' });
   
       // Update liked or disliked list
       if (liked) {
-        if (!user.likedMovies.includes(movieId)) {
+        if (!user.likedMovies?.includes(movieId)) {
           user.likedMovies.push(movieId);
         }
       } else {
-        if (!user.dislikedMovies.includes(movieId)) {
+        if (!user.dislikedMovies?.includes(movieId)) {
           user.dislikedMovies.push(movieId);
         }
       }
