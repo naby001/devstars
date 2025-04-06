@@ -20,6 +20,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { movieslist } from '../movielist';
 import MoodboardSelector from '../components/MoodBoardSelector';
 import { useSelector } from 'react-redux';
+import { moodboards } from './Moods';
 const { width, height } = Dimensions.get('window');
 
 
@@ -143,12 +144,13 @@ export default function SwipeUI() {
           });
     
         } else if (dy < -100) {
-          setsaving(true);
+          setplaying(true);
           
           translateX.setValue(0);
           translateY.setValue(0);
     
         } else {
+          
            // setsaving(null)
           // Reset animation
           Animated.spring(translateX, {
@@ -350,7 +352,7 @@ else
 
                        
                     </ImageBackground>    
-                    <TouchableOpacity style={{position:'absolute', top:0, right:0}}>
+                    <TouchableOpacity style={{position:'absolute', top:0, right:0}} onPress={()=>{const ci=currentIndex+1;setCurrentIndex(ci);}}>
                     <Entypo name="cross" size={40} color="white" style={{ opacity: 0.5 }} />
 
     </TouchableOpacity>
@@ -375,16 +377,57 @@ else
             {/* <CommentSection/> */}
             <MoodboardSelector
   moodboards={[
-    { id: 1, name: 'Weekend Vibes' },
-    { id: 2, name: 'Feel Good' },
-    { id: 3, name: 'Drama Hour' },
+    { id: 1, name: 'Date Night' },
+    { id: 2, name: 'Summer Vacation' },
+    { id: 3, name: 'Flight to Frankfurt' },
   ]}
-  onSelect={(mb) => console.log('Selected:', mb)}
+  onSelect={(selectedMoodboard) => {
+    const fullMoodboard = moodboards.find(mb => mb.id === selectedMoodboard.id);
+    if (fullMoodboard) {
+      fullMoodboard.movieIds.push(movies[currentIndex].movieid);
+      const ci=currentIndex;
+      setCurrentIndex(ci+1);
+      setsaving(false);
+    }
+  }}
 />
           </Animated.View>
         </>
       )}
           
+          {playing && (
+        <>
+          <TouchableWithoutFeedback onPress={()=>setplaying(null)}>
+            <View style={[{...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'}]} />
+          </TouchableWithoutFeedback>
+          <Animated.View
+            style={[
+              styles.bottomSheet,
+              
+            ]}
+          >
+            {/* <CommentSection/> */}
+            <MoodboardSelector
+  moodboards={[
+    { id: 1, name: 'JioHotstar' },
+    { id: 2, name: 'Netflix' },
+    { id: 3, name: 'AmazonPrimeVideo' },
+  ]}
+   ott={true}
+  onSelect={(selectedMoodboard) => {
+    const fullMoodboard = moodboards.find(mb => mb.id === selectedMoodboard.id);
+    if (fullMoodboard) {
+      fullMoodboard.movieIds.push(movies[currentIndex].movieid);
+      const ci=currentIndex;
+      setCurrentIndex(ci+1);
+      setsaving(false);
+    }
+  }}
+/>
+          </Animated.View>
+        </>
+      )}
         </View>
     );
 }

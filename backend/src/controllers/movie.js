@@ -1,4 +1,5 @@
 import Movie from "../models/Movie.js";
+import Playlist from "../models/Playlist.js";
 import { User } from "../models/User.js";
 
 export const swipe= async (req, res) => {
@@ -112,5 +113,45 @@ export const swipe= async (req, res) => {
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Server error" });
+    }
+  };
+
+  
+export const getPlaylistsOfUser = async (req, res) => {
+    const { userId } = req.body;
+     console.log(req.body);
+    try {
+      const playlists = await Playlist.find({ userId }).populate('movieIds');
+  
+      res.status(200).json({ playlists });
+    } catch (error) {
+      console.error('Error fetching playlists:', error);
+      res.status(500).json({ message: 'Failed to fetch playlists' });
+    }
+  };
+
+  export const addMovieToPlaylist = async (req, res) => {
+    const { playlistId } = req.body;
+    const { movieId } = req.body;
+  
+    try {
+      const playlist = await Playlist.findById(playlistId);
+  
+      if (!playlist) {
+        return res.status(404).json({ message: 'Playlist not found' });
+      }
+  
+      // Avoid adding duplicate movieId
+      if (playlist.movieIds.includes(movieId)) {
+        return res.status(400).json({ message: 'Movie already in playlist' });
+      }
+  
+      playlist.movieIds.push(movieId);
+      await playlist.save();
+  
+      res.status(200).json(playlist );
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error adding movie to playlist' });
     }
   };
