@@ -162,7 +162,7 @@ export default function SwipeUI() {
         }
       }
     });
-    const getmovies = async () => {
+    const getmovies = async (recommend) => {
         const data = { userId: user._id };
        
         try {
@@ -185,8 +185,10 @@ export default function SwipeUI() {
     //     : null;
     // })
     // .filter(movie => movie !== null); // remove not found ones
-
+  if(!recommend)
   setmovies(returneddata);
+else
+    setmovies((prev)=>[...prev,...returneddata]);
             setviewed(0);
 
         } catch (error) {
@@ -195,7 +197,7 @@ export default function SwipeUI() {
     }
     useEffect(() => {
         
-        getmovies();
+        getmovies(false);
     }, [])
     useEffect(() => {
         if (currentIndex < movies.length) {
@@ -225,7 +227,9 @@ export default function SwipeUI() {
                 body: JSON.stringify(data)
             });
             const returnedmsg = await response.json();
-          
+          if(seen1%3===0){
+            getmovies(true);
+          }
             console.log(returnedmsg);
 
         } catch (error) {
