@@ -4,7 +4,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/user.js';
 import cors from 'cors';
 const app = express();
-
+//start
 // Middleware
 app.use(express.json());
 
