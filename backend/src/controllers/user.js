@@ -18,6 +18,6 @@ export const googleLogin = async (req, res) => {
     console.log(saveduser);
     res.status(200).json(saveduser);
   } catch (error) {
-    
+    console.log(error);
   }
 };
