@@ -10,11 +10,19 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    uniname: {
+    university: {
         type: String,
-        required: true,
+       // required: true,
     },
     city: {
+        type: String,
+        
+    },
+    isStudent: {
+        type: String,
+        
+    },
+    password: {
         type: String,
         
     },
