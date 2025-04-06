@@ -10,14 +10,30 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    uniname: {
+    university: {
         type: String,
-        required: true,
+       // required: true,
     },
     city: {
         type: String,
         
     },
+    isStudent: {
+        type: String,
+        
+    },
+    password: {
+        type: String,
+        
+    },
+    liked:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Movie'
+    }],
+    disliked:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Movie'
+    }],
     createdAt: {
         type: Date,
         default: Date.now

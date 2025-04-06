@@ -1,9 +1,10 @@
 import express from 'express';
-import { googleLogin } from '../controllers/user.js';
+import { swipe } from '../controllers/movie.js';
+
 //import { addfriend, getGoogleAuthURL, handleGoogleCallback, login, signup, suggestFriends } from '../controllers/user.js';
 
 const router = express.Router();
-router.post('/signup', googleLogin)
+router.post('/swipe', swipe)
 // Route for user signup
 
 export default router;
