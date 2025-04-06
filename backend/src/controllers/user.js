@@ -21,3 +21,7 @@ export const googleLogin = async (req, res) => {
     console.log(error);
   }
 };
+
+export const search=async(req,res)=>{
+    
+}
