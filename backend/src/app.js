@@ -1,18 +1,17 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const routes = require('./routes');
-const { connectDB } = require('./config/db');
-
+import express from 'express';
+import bodyParser from 'body-parser';
+import connectDB from './config/db.js';
+import authRoutes from './routes/user.js';
+import cors from 'cors';
 const app = express();
 
 // Middleware
 app.use(express.json());
 
-// Database connection
 connectDB();
-
-// Routes
-app.use('/api', routes());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+app.use('/user', authRoutes);
 
 const PORT = process.env.PORT || 5000;
 

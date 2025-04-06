@@ -1,25 +1,19 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("MongoDB connected");
+    const conn = await mongoose.connect(process.env.MONGO_URI,{
+      useNewUrlParser:true,
+      
+useUnifiedTopology:true,    });
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
-    process.exit(1);
+    console.error(`Error: ${error.message}`);
+    //process.exit(1);
   }
 };
 
-const userSchema = new mongoose.Schema({
-  googleId: { type: String, required: true },
-  username: { type: String, required: true },
-  universityName: { type: String, required: true },
-  cityName: { type: String, required: true },
-});
-
-const User = mongoose.model("User", userSchema);
-
-module.exports = { connectDB, User };
+export default connectDB;
