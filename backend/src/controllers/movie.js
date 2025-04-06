@@ -1,5 +1,6 @@
 import Movie from "../models/Movie.js";
 import Playlist from "../models/Playlist.js";
+import Uniswipe from "../models/Uniswipe.js";
 import { User } from "../models/User.js";
 
 export const swipe= async (req, res) => {
@@ -40,6 +41,11 @@ export const swipe= async (req, res) => {
       user.contextVector = contextVector;
       console.log(embeddings)
       const newuser=await user.save();
+      const newunientry= new Uniswipe({
+        uni:user.university,
+        liked:movieId
+      });
+      await newunientry.save();
     console.log(newuser);
       res.status(200).json({ message: 'Swipe recorded' });
     } catch (error) {
