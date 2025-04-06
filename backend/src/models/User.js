@@ -27,12 +27,10 @@ const userSchema = new mongoose.Schema({
         
     },
     liked:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Movie'
+       type:String
     }],
     disliked:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Movie'
+        type:String
     }],
     createdAt: {
         type: Date,
