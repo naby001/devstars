@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
     disliked:[{
         type:String
     }],
+    contextVector: {
+        type: [Number], // array of floats
+        default: [],
+      },
     createdAt: {
         type: Date,
         default: Date.now

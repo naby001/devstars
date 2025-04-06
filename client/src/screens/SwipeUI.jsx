@@ -17,7 +17,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-import { movies } from '../movielist';
+import { movieslist } from '../movielist';
 import MoodboardSelector from '../components/MoodBoardSelector';
 import { useSelector } from 'react-redux';
 const { width, height } = Dimensions.get('window');
@@ -48,12 +48,13 @@ export default function SwipeUI() {
     const rightImageScale = useRef(new Animated.Value(1)).current; // Scale for the right image
     // const dispatch=useDispatch();
     //const {setIsTabBarVisible}=useTabBar();
+    const [movies,setmovies]=useState([]);
     const [liking,setliking]=useState(null);
     const [disliking,setdisliking]=useState(null);
     const [saving,setsaving]=useState(false);
     const [playing,setplaying]=useState(null);
     const user = useSelector((state) => state.auth.user);
-    
+     const [seen,setseen]=useState(0);
     useEffect(() => {
         const handleBackPress = () => {
             if (showDiscussion) {
@@ -161,26 +162,40 @@ export default function SwipeUI() {
         }
       }
     });
-    
-    useEffect(() => {
-        const getripples = async () => {
-            const data = { campusid: user.campus_id, userid: user._id };
-            try {
-                const response = await fetch('http://192.168.31.12:5000/ripple/getripple', {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const returneddata = await response.json();
+    const getmovies = async () => {
+        const data = { userId: user._id };
+       
+        try {
+            const response = await fetch('http://192.168.251.241:5000/movie/getrecommend', {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const returneddata = await response.json();
+            console.log(returneddata)
+    //         const processedMovies = returneddata
+    // .map(rec => {
+    //   const found = movieslist.find(m => m.id === rec.movieid);
+    //   return found
+    //     ? {
+    //         title: found.primaryTitle,
+    //         image: found.primaryImage,
+    //         id: found.movieid
+    //       }
+    //     : null;
+    // })
+    // .filter(movie => movie !== null); // remove not found ones
 
-                //setmovies(returneddata);
-                setviewed(0);
+  setmovies(returneddata);
+            setviewed(0);
 
-            } catch (error) {
+        } catch (error) {
 
-            }
         }
-        getripples();
+    }
+    useEffect(() => {
+        
+        getmovies();
     }, [])
     useEffect(() => {
         if (currentIndex < movies.length) {
@@ -196,10 +211,12 @@ export default function SwipeUI() {
     const react = async (index, like) => {
         //console.log('hello')
         const data = {
-            movieId: movies[index].id,
+            movieId: movies[index].movieid,
             liked: like,
             userId: user._id
         };
+        const seen1=seen+1;
+        setseen(seen1);
         
         try {
             const response = await fetch('http://192.168.251.241:5000/movie/swipe', {
@@ -208,6 +225,7 @@ export default function SwipeUI() {
                 body: JSON.stringify(data)
             });
             const returnedmsg = await response.json();
+          
             console.log(returnedmsg);
 
         } catch (error) {
@@ -300,7 +318,7 @@ export default function SwipeUI() {
                     ]}
                 >
                     <ImageBackground
-                        source={{ uri: movies[currentIndex].primaryImage }}
+                        source={{ uri: movies[currentIndex].image }}
                         style={styles.backgroundImage}
                         resizeMode="cover"
                         
@@ -312,10 +330,10 @@ export default function SwipeUI() {
                         <View style={styles.gossipText}>
   <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
     <Text style={{ fontSize: 24, color: 'white', marginRight: 8 }}>
-      {movies[currentIndex].primaryTitle}
+      {movies[currentIndex].title}
     </Text>
     <View style={{ backgroundColor: 'grey', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, marginTop:20, marginRight: 8 }}>
-      <Text style={{ color: 'white', fontSize: 12 }}>{movies[currentIndex].contentRating}</Text>
+      <Text style={{ color: 'white', fontSize: 12 }}>{movies[currentIndex].rating}</Text>
     </View>
     <Text style={{ color: 'white', fontSize: 15 }}>{movies[currentIndex].startYear}</Text>
     </View>

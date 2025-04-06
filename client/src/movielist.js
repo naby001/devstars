@@ -1,4 +1,4 @@
-export const movies=
+export const movieslist=
 [{"id":"tt0111161",
     "url":"https:\/\/www.imdb.com\/title\/tt0111161\/",
     "primaryTitle":"The Shawshank Redemption",

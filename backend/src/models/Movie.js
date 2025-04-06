@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const movieSchema = new mongoose.Schema({
     movieid: String,
   title: String,
+  image:String,
   description: String,
   rating:String,
   genres: [String],

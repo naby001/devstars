@@ -23,7 +23,7 @@ const run = async () => {
   useUnifiedTopology:true,    });
   
   
-  const limitedMovies = movies.slice(0, 60);
+  const limitedMovies = movies.slice(0, 100);
 
   for (const movie of limitedMovies) {
     try {
@@ -34,7 +34,8 @@ const run = async () => {
        console.log(movie.id);
       const newMovie = new Movie({
         movieid:movie.id,
-        title: movie.title,
+        title: movie.primaryTitle,
+        image:movie.primaryImage,
         description: movie.description,
         genres: movie.genres,
         interests: movie.interests,
